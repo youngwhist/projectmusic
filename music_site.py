@@ -29,6 +29,7 @@ def upload_file():
     return render_template('base.html')
 
 
+# Замедление/ускорение
 @app.route('/fast_slow', methods=['GET', 'POST'])
 def fast_slow():
     global new_sound
