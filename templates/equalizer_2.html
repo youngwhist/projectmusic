@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FORSOUL</title>
+</head>
+<body>
+    {% if sound %}
+        <h1>Эквалайзер</h1>
+        <audio controls src="{{sound}}"></audio>
+        <br>
+        <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
+        <form action="{{ url_for('equalize_2')}}" method="post">
+        {% for item in count %}
+            <label for="freq_{{item}}">Частота {{item}}</label>
+            <input type="text" id="freq_{{item}}" name="freq_{{item}}" placeholder="freq_{{item}}">
+            <label for="coeff_{{item}}">Коэффициент {{item}}</label>
+            <input type="text" id="coeff_{{item}}" name="coeff_{{item}}" placeholder="coeff_{{item}}">
+            <br>
+        {% endfor %}
+        <input type="submit" name="submit_button" value="Преобразовать файл">
+    {% else %}
+        <h1>Выберите аудиофайл:</h1>
+    {% endif %}
+    </form>
+</body>
+</html>

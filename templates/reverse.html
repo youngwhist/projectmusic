@@ -6,13 +6,11 @@
 </head>
 <body>
     {% if sound %}
-    <h1>Аудио</h1>
+    <h1>Разворот в обратную сторону</h1>
     <audio controls src="{{sound}}"></audio>
     <br>
     <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
-    <form action="{{ url_for('fast_slow')}}" method="post">
-    <label for="fs_percent">Уровень (от 0.1 до 2 с шагом 0.1):</label>
-    <input type="text" id="fs_percent" name="percent" placeholder="fs_percent">
+    <form action="{{ url_for('reverse')}}" method="post">
     <input type="submit" name="submit_button" value="Преобразовать файл">
     {% else %}
     <h1>Выберите аудиофайл:</h1>

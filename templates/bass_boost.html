@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FORSOUL</title>
+</head>
+<body>
+    {% if sound %}
+    <h1>Усиление басов</h1>
+    <audio controls src="{{sound}}"></audio>
+    <br>
+    <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
+    <form action="{{ url_for('bast_boost')}}" method="post">
+    <label for="bass_percent">Уровень (от 1 до 100 с шагом 1):</label>
+    <input type="text" id="bass_percent" name="bass_percent" placeholder="bass_percent">
+    <input type="submit" name="submit_button" value="Преобразовать файл">
+    {% else %}
+    <h1>Выберите аудиофайл:</h1>
+    {% endif %}
+    </form>
+</body>
+</html>

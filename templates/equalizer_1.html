@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FORSOUL</title>
+</head>
+<body>
+    {% if sound %}
+        <h1>Эквалайзер</h1>
+        <audio controls src="{{sound}}"></audio>
+        <br>
+        <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
+        <form action="{{ url_for('equalize_1')}}" method="post">
+        <label for="parameters">Количество параметров (количество частот и столько же коэффициентов):</label>
+        <input type="text" id="parameters" name="parameters" placeholder="parameters">
+        <br>
+        <input type="submit" name="submit_button" value="Настроить">
+    {% else %}
+        <h1>Выберите аудиофайл:</h1>
+    {% endif %}
+    </form>
+</body>
+</html>
