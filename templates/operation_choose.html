@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>ВЫБЕРИТЕ ОПЕРАЦИЮ</h1>
-    <h1>Важно: эквалайзер принимает только файлы с расширением .wav</h1>
+    <h1>Важно: эквалайзер и GrossBeat принимают только файлы с расширением .wav</h1>
     <audio controls src="{{sound}}"></audio>
     <br>
     <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
@@ -24,6 +24,8 @@
     <a href="/reverb"><button class='btn btn-default'>Ревербация</button></a>
     <br>
     <a href="/equalize_1"><button class='btn btn-default'>Эквалайзер</button></a>
+    <br>
+    <a href="/gross_beat"><button class='btn btn-default'>GrossBeat</button></a>
     <br>
     <a href="/">Вернуться на главную</a>
 </body>

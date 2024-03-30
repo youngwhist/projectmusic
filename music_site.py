@@ -7,28 +7,36 @@ from bass import bass_boost
 from nonoise import remove_noise
 from reverb import reverb_sound
 from eqalazer import equalizer
+from grossbit import gross_bit
 
 app = Flask(__name__)
 
 upload_folder = os.path.join('static', 'snd')
-extensions = ['mp3', 'wav', 'ogg']
+extensions = ['mp3', 'wav', 'ogg', 'flac']  # Подходящие расширения
 
 app.config['UPLOAD'] = upload_folder
 
-audio_sound = ''
-new_sound = ''
+audio_sound = ''  # Путь до текущего звука
+new_sound = ''  # Путь до нового звука
 list_count = []  # Список параметров для эквалайзера
 
 
 # Главная страница
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    global audio_sound
+    global audio_sound, new_sound
+
+    # Удаление файлов после прошлой сессии
     if os.path.exists('static/snd/result.wav') is True:
         os.remove('static/snd/result.wav')
     if os.path.exists(audio_sound) is True:
         os.remove(audio_sound)
-    list_count.clear()
+    audio_sound = ''
+    new_sound = ''
+    list_count.clear()  # Очистка параметров эквалайзера
+    converted = False
+
+    # Загрузка файла
     if request.method == 'POST':
         file = request.files['snd']
         filename = secure_filename(file.filename)
@@ -37,12 +45,12 @@ def upload_file():
         file.save(os.path.join(app.config['UPLOAD'], filename))
         sound = os.path.join(app.config['UPLOAD'], filename)
         audio_sound = sound
-        return redirect('/operation')
+        return redirect('/redact')
     return render_template('base.html')
 
 
 # Выбор операции
-@app.route('/operation', methods=['GET', 'POST'])
+@app.route('/redact', methods=['GET', 'POST'])
 def operation_choose():
     return render_template('operation_choose.html', sound=audio_sound)
 
@@ -50,9 +58,9 @@ def operation_choose():
 # Замедление/ускорение
 @app.route('/fast_slow', methods=['GET', 'POST'])
 def fast_slow():
-    global new_sound
+    global new_sound  # Путь до нового файла записывается в глобальную переменную
     if request.method == 'POST':
-        x = request.form.get("fs_percent")
+        x = request.form.get("fs_percent")  # Получение значения
         diapason = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
         try:
             if float(x) not in diapason:
@@ -138,7 +146,7 @@ def reverb():
 # Эквалайзер (страница 1)
 @app.route('/equalize_1', methods=['GET', 'POST'])
 def equalize_1():
-    if audio_sound[-3:] != 'wav':
+    if audio_sound[-3:] != 'wav':  # Проверка расширения файла
         return render_template('equalize_error.html')
     else:
         if request.method == 'POST':
@@ -170,6 +178,24 @@ def equalize_2():
         except ValueError:
             return render_template('error.html')
     return render_template('equalizer_2.html', sound=audio_sound, count=list_count)
+
+
+# GrossBeat
+@app.route('/gross_beat', methods=['GET', 'POST'])
+def gross_beat():
+    global new_sound
+    if audio_sound[-3:] != 'wav':
+        return render_template('equalize_error.html')
+    else:
+        if request.method == 'POST':
+            x = request.form.get("gs_percent")
+            try:
+                new_sound = gross_bit(audio_sound, int(x))
+                os.remove(audio_sound)
+                return redirect('/new_file')
+            except ValueError:
+                return render_template('error.html')
+    return render_template('gross_beat.html', sound=audio_sound)
 
 
 # Страница с обработанным файлом
