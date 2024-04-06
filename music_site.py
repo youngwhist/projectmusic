@@ -8,6 +8,8 @@ from nonoise import remove_noise
 from reverb import reverb_sound
 from eqalazer import equalizer
 from grossbit import gross_bit
+from deletenenuzn import cuttingnenuznogo
+from obrezka import obrezka
 
 app = Flask(__name__)
 
@@ -34,7 +36,6 @@ def upload_file():
     audio_sound = ''
     new_sound = ''
     list_count.clear()  # Очистка параметров эквалайзера
-    converted = False
 
     # Загрузка файла
     if request.method == 'POST':
@@ -47,6 +48,12 @@ def upload_file():
         audio_sound = sound
         return redirect('/redact')
     return render_template('base.html')
+
+
+# Информация о сайте
+@app.route('/info', methods=['GET', 'POST'])
+def info():
+    return render_template('info.html')
 
 
 # Выбор операции
@@ -196,6 +203,40 @@ def gross_beat():
             except ValueError:
                 return render_template('error.html')
     return render_template('gross_beat.html', sound=audio_sound)
+
+
+# Вырезка ненужного фрагмента
+@app.route('/slicer', methods=['GET', 'POST'])
+def slicer():
+    global new_sound
+    if request.method == 'POST':
+        start1, end1, start2, end2 = (request.form.get("start_1"),
+                                      request.form.get("end_1"),
+                                      request.form.get("start_2"),
+                                      request.form.get("end_2"))
+        try:
+            new_sound = cuttingnenuznogo(audio_sound, int(start1), int(end1), int(start2), int(end2))
+            os.remove(audio_sound)
+            return redirect('/new_file')
+        except ValueError:
+            return render_template('error.html')
+    return render_template('slicer.html', sound=audio_sound)
+
+
+# Обрезка
+@app.route('/cutter', methods=['GET', 'POST'])
+def cutter():
+    global new_sound
+    if request.method == 'POST':
+        start, end = (request.form.get("start"),
+                      request.form.get("end"))
+        try:
+            new_sound = obrezka(audio_sound, int(start), int(end))
+            os.remove(audio_sound)
+            return redirect('/new_file')
+        except ValueError:
+            return render_template('error.html')
+    return render_template('cutter.html', sound=audio_sound)
 
 
 # Страница с обработанным файлом

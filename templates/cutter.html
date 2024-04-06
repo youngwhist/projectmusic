@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FORSOUL</title>
+</head>
+<body>
+    {% if sound %}
+    <h1>Вырезка ненужного фрагмента</h1>
+    <audio controls src="{{sound}}"></audio>
+    <br>
+    <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
+    <form action="{{ url_for('cutter')}}" method="post">
+    <label for="start">Начальное время (кол-во секунд):</label>
+    <input type="text" id="start" name="start" placeholder="start">
+    <br>
+    <label for="end">Конечное время (кол-во секунд):</label>
+    <input type="text" id="end" name="end" placeholder="end">
+    <input type="submit" name="submit_button" value="Преобразовать файл">
+    {% else %}
+    <h1>Выберите аудиофайл:</h1>
+    {% endif %}
+    </form>
+</body>
+</html>

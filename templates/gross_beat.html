@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FORSOUL</title>
+</head>
+<body>
+    {% if sound %}
+    <h1>GrossBeat</h1>
+    <audio controls src="{{sound}}"></audio>
+    <br>
+    <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
+    <form action="{{ url_for('gross_beat')}}" method="post">
+    <label for="gs_percent">Количество битов (число):</label>
+    <input type="text" id="gs_percent" name="gs_percent" placeholder="gs_percent">
+    <input type="submit" name="submit_button" value="Преобразовать файл">
+    {% else %}
+    <h1>Выберите аудиофайл:</h1>
+    {% endif %}
+    </form>
+</body>
+</html>
