@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="static/css/background.css">
+    <link rel="stylesheet" href="static/css/rectangle2.css">
     <title>FORSOUL</title>
-    <h1>Ошибка: Неправильное расширение файла или неверный аргумент изменения</h1>
-    <a href="{{ url_for('upload_file') }}">Вернуться на главную</a>
 </head>
 <body>
+    {% set button_style = "background-color: #1d2602;
+            color: #ffffff; width: 15%; height: 70px;
+            font-size: 25px; font-family: Comic Sans MS;" %}
+    <center><div class="rectangle text_center">Ошибка: {{error}}.</div></center>
+    <br>
+    <br>
+    <br>
+    <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
 </body>
 </html>

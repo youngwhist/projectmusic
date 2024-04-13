@@ -4,31 +4,55 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="static/css/background.css">
+    <link rel="stylesheet" href="static/css/rectangle3.css">
+    <link rel="stylesheet" href="static/css/form_control.css">
     <title>FORSOUL</title>
 </head>
 <body>
+    {% set button_style = "background-color: #1d2602;
+            color: #ffffff; width: 15%; height: 70px;
+            font-size: 25px; font-family: Comic Sans MS;" %}
     {% if sound %}
-    <h1>Вырезка ненужного фрагмента</h1>
-    <audio controls src="{{sound}}"></audio>
+    <center><div class="rectangle text_center">Вырезка ненужного фрагмента</div></center>
     <br>
-    <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
-    <form action="{{ url_for('slicer')}}" method="post">
-    <h2>В одной секунде 1000 миллисекунд</h2>
-    <label for="start_1">Начальное время 1 (кол-во миллисекунд):</label>
-    <input type="text" id="start_1" name="start_1" placeholder="start_1">
     <br>
-    <label for="end_1">Конечное время 1 (кол-во миллисекунд):</label>
-    <input type="text" id="end_1" name="end_1" placeholder="end_1">
     <br>
-    <label for="start_2">Начальное время 2 (кол-во миллисекунд):</label>
-    <input type="text" id="start_2" name="start_2" placeholder="start_2">
     <br>
-    <label for="end_2">Конечнное время 2 (кол-во миллисекунд):</label>
-    <input type="text" id="end_2" name="end_2" placeholder="end_2">
-    <input type="submit" name="submit_button" value="Преобразовать файл">
+    <br>
+    <br>
+    <br>
+    <br>
+    <center><div class="rectangle text_center" style="width: 50%;">Текущая запись: {{sound[11:]}}</div></center>
+    <br>
+    <center><audio controls src="{{sound}}"></audio></center>
+    <br>
+    <center><form action="{{ url_for('slicer')}}" method="post">
+    <label for="start_1" class="rectangle text_center">Начальное время 1 (кол-во миллисекунд):</label>
+    <input type="text" id="start_1" name="start_1" placeholder="start_1"
+           class="form-control" style="width: 15%; height: 60px">
+    <br>
+    <br>
+    <label for="end_1" class="rectangle text_center">Конечное время 1 (кол-во миллисекунд):</label>
+    <input type="text" id="end_1" name="end_1" placeholder="end_1"
+           class="form-control" style="width: 15%; height: 60px">
+    <br>
+    <br>
+    <label for="start_2" class="rectangle text_center">Начальное время 2 (кол-во миллисекунд):</label>
+    <input type="text" id="start_2" name="start_2" placeholder="start_2"
+           class="form-control" style="width: 15%; height: 60px">
+    <br>
+    <br>
+    <label for="end_2" class="rectangle text_center">Конечнное время 2 (кол-во миллисекунд):</label>
+    <input type="text" id="end_2" name="end_2" placeholder="end_2"
+           class="form-control" style="width: 15%; height: 60px">
+    <br>
+    <br>
+    <input type="submit" name="submit_button" style="{{button_style}}" value="Преобразовать файл"></form></center>
     {% else %}
     <h1>Выберите аудиофайл:</h1>
     {% endif %}
-    </form>
+    <br>
+    <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
 </body>
 </html>

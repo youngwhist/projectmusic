@@ -4,21 +4,40 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="static/css/background.css">
+    <link rel="stylesheet" href="static/css/rectangle4.css">
+    <link rel="stylesheet" href="static/css/form_control.css">
     <title>FORSOUL</title>
 </head>
 <body>
+    {% set button_style = "background-color: #1d2602;
+            color: #ffffff; width: 15%; height: 70px;
+            font-size: 25px; font-family: Comic Sans MS;" %}
     {% if sound %}
-    <h1>Удаление шума</h1>
-    <audio controls src="{{sound}}"></audio>
+    <center><div class="rectangle text_center">Удаление шума</div></center>
     <br>
-    <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
-    <form action="{{ url_for('no_noise')}}" method="post">
-    <label for="noise_percent">Уровень (от 1 до 20 с шагом 1):</label>
-    <input type="text" id="noise_percent" name="noise_percent" placeholder="noise_percent">
-    <input type="submit" name="submit_button" value="Преобразовать файл">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <center><div class="rectangle text_center" style="width: 50%;">Текущая запись: {{sound[11:]}}</div></center>
+    <br>
+    <center><audio controls src="{{sound}}"></audio></center>
+    <br>
+    <center><form action="{{ url_for('no_noise')}}" method="post">
+    <center><label for="noise_percent" class="rectangle text_center">Уровень (от 1 до 20 с шагом 1):</label></center>
+    <br>
+    <center><input type="text" id="noise_percent" name="noise_percent" placeholder="noise_percent"
+                   class="form-control" style="width: 15%; height: 60px"></center>
+    <br>
+    <input type="submit" name="submit_button" style="{{button_style}}" value="Преобразовать файл"></form></center>
     {% else %}
     <h1>Выберите аудиофайл:</h1>
     {% endif %}
-    </form>
+    <br>
+    <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
 </body>
 </html>

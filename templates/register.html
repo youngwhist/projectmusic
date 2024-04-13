@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport"
           content="width=device-width,
                    initial-scale=1" />
@@ -11,41 +12,59 @@
           integrity=
         "sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
           crossorigin="anonymous"/>
+    <link rel="stylesheet" href="static/css/background.css">
+    <link rel="stylesheet" href="static/css/rectangle3.css">
+    <link rel="stylesheet" href="static/css/alert.css">
+    <link rel="stylesheet" href="static/css/form_control.css">
     <title>FORSOUL</title>
 </head>
 <body>
-    <h1>Регистрация</h1>
-<form action="" method="post">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.login.label }}<br>
-        {{ form.login(class="form-control", type="login") }}<br>
-        {% for error in form.login.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.password.label }}<br>
-        {{ form.password(class="form-control", type="password") }}<br>
-        {% for error in form.password.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.password_again.label }}<br>
-        {{ form.password_again(class="form-control", type="password") }}<br>
-        {% for error in form.password_again.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-    {{message}}
-</form>
+    {% set button_style = "background-color: #1d2602;
+            color: #ffffff; width: 15%; height: 70px;
+            font-size: 25px; font-family: Comic Sans MS;" %}
+    <center><div class="rectangle text_center">Регистрация</div></center>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <br>
+        <br>
+        <p>
+            <center><label class="rectangle text_center"
+                           style="width: 15%">{{ form.login.label }}</label></center><br>
+            <center>{{ form.login(class="form-control", type="login") }}</center><br>
+            {% for error in form.login.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            <center><label class="rectangle text_center"
+                           style="width: 15%">{{ form.password.label }}</label></center><br>
+            <center>{{ form.password(class="form-control", type="password") }}</center><br>
+            {% for error in form.password.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <br>
+        <p>
+            <center><label class="rectangle text_center"
+                           style="width: 25%">{{ form.password_again.label }}</label></center><br>
+            <center>{{ form.password_again(class="form-control", type="password") }}</center><br>
+            {% for error in form.password_again.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <br>
+        <br>
+        <center><input type="submit" style="{{button_style}}" value="Войти"/></center>
+        <br>
+        <div class="rectangle text_center">{{ message }}</div>
+    </form>
+    <br>
+    <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
 </body>
 </html>

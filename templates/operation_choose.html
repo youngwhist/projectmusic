@@ -4,33 +4,49 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="static/css/background.css">
+    <link rel="stylesheet" href="static/css/rectangle2.css">
     <title>FORSOUL</title>
 </head>
 <body>
-    <h1>ВЫБЕРИТЕ ОПЕРАЦИЮ</h1>
-    <h1>Важно: эквалайзер и GrossBeat принимают только файлы с расширением .wav</h1>
-    <audio controls src="{{sound}}"></audio>
+    {% set button_style = "background-color: #1d2602;
+            color: #ffffff; width: 15%; height: 70px;
+            font-size: 25px; font-family: Comic Sans MS;" %}
+    <center><div class="rectangle text_center">ВЫБЕРИТЕ ОПЕРАЦИЮ</div></center>
+    <center><div class="rectangle text_center">Важно: эквалайзер и GrossBeat принимают
+        только файлы с расширением .wav</div></center>
     <br>
-    <a href="{{sound}}"> Текущая аудиозапись: {{sound[11:]}} </a>
+    <center><audio controls src="{{sound}}"></audio></center>
     <br>
-    <a href="/fast_slow"><button class='btn btn-default'>Замедление/Ускорение</button></a>
+    <center><a href="/fast_slow"><button class='btn btn-default' style="{{button_style}}">
+        Замедление/Ускорение</button></a></center>
     <br>
-    <a href="/reverse"><button class='btn btn-default'>Разворот в обратную сторону</button></a>
+    <center><a href="/reverse"><button class='btn btn-default' style="{{button_style}}">Разворот в
+        обратную сторону</button></a></center>
     <br>
-    <a href="/bast_boost"><button class='btn btn-default'>Усиление басов</button></a>
+    <center><a href="/bast_boost"><button class='btn btn-default' style="{{button_style}}">Усиление
+        басов</button></a></center>
     <br>
-    <a href="/no_noise"><button class='btn btn-default'>Удаление шума</button></a>
+    <center><a href="/no_noise"><button class='btn btn-default' style="{{button_style}}">Удаление
+        шума</button></a></center>
     <br>
-    <a href="/reverb"><button class='btn btn-default'>Ревербация</button></a>
+    <center><a href="/reverb"><button class='btn btn-default' style="{{button_style}}">Ревербация</button></a></center>
     <br>
-    <a href="/equalize_1"><button class='btn btn-default'>Эквалайзер</button></a>
+    <center><a href="/equalize_1"><button class='btn btn-default' style="{{button_style}}">
+        Эквалайзер</button></a></center>
     <br>
-    <a href="/gross_beat"><button class='btn btn-default'>GrossBeat</button></a>
+    <center><a href="/gross_beat"><button class='btn btn-default' style="{{button_style}}">
+        GrossBeat</button></a></center>
     <br>
-    <a href="/slicer"><button class='btn btn-default'>Вырезка ненужного фрагмента</button></a>
+    <center><a href="/slicer"><button class='btn btn-default' style="{{button_style}}">Вырезка
+        ненужного фрагмента</button></a></center>
     <br>
-    <a href="/cutter"><button class='btn btn-default'>Обрезка</button></a>
+    <center><a href="/cutter"><button class='btn btn-default' style="{{button_style}}">Обрезка</button></a></center>
     <br>
-    <a href="/"><h3>Вернуться на главную</h3></a>
+    <center><a href="/effects"><button class='btn btn-default' style="{{button_style}}">Наложение
+        эффектов</button></a></center>
+    <br>
+    <center><a href="/"><button class='btn btn-default' style="{{button_style}}">Вернуться
+        на главную</button></a></center>
 </body>
 </html>

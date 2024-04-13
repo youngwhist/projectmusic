@@ -1,0 +1,11 @@
+.alert {
+    width: 45%;
+    height: 90px;
+    border:1px solid;
+    margin:auto;
+    background: #1d2602;
+    color: #ffffff;
+    font-size: 45px;
+    font-family: Comic Sans MS;
+    text-align: center;
+	   }

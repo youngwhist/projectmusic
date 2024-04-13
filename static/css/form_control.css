@@ -1,0 +1,23 @@
+.form-control {
+    width: 30%;
+    height: 70px;
+    border:1px solid;
+    margin:auto;
+    background: #1d2602;
+    color: #ffffff;
+    font-size: 45px;
+    font-family: Comic Sans MS;
+    text-align: center;
+	   }
+
+.form-control:focus {
+    width: 30%;
+    height: 70px;
+    border:1px solid;
+    margin:auto;
+    background: #f6ffdb;
+    color: #000000;
+    font-size: 45px;
+    font-family: Comic Sans MS;
+    text-align: center;
+	   }

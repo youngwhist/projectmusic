@@ -11,27 +11,40 @@
           integrity=
         "sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
           crossorigin="anonymous"/>
+    <link rel="stylesheet" href="static/css/alert.css">
+    <link rel="stylesheet" href="static/css/rectangle3.css">
+    <link rel="stylesheet" href="static/css/background.css">
+    <link rel="stylesheet" href="static/css/round_images.css">
     <title>FORSOUL</title>
 </head>
 <body>
-    <center><h1>FORSOUL - Это для души!</h1></center>
-    <center>Здесь Вы найдёте множество различных операций для работы со звуком -
-    от замедления и ускорения до самого настоящего эквалайзера.</center>
-    <center>А если что-то не так, или Вам неудобно пользоваться сайтом,</center>
-    <center>можно воспользоваться <a href="https://t.me/forsoul_music_bot">ботом</a>.</center>
-    <center>Для вас старались:</center>
+    {% set text_style = "background-color: #1d2602;
+            color: #ffffff; width: 90%; height: 150px; border:1px solid;
+            font-size: 25px; font-family: Comic Sans MS;" %}
+    {% set button_style = "background-color: #1d2602;
+            color: #ffffff; width: 15%; height: 70px;
+            font-size: 25px; font-family: Comic Sans MS;" %}
+    <center><div class="rectangle text_center">FORSOUL - Это для души!</div></center>
+    <br>
+    <center><p style="{{text_style}}">Здесь Вы найдёте множество различных операций для работы со звуком -
+        от замедления и ускорения до самого настоящего эквалайзера. <br>
+        А если что-то не так, или Вам неудобно пользоваться сайтом, <br>
+        можно воспользоваться <a href="https://t.me/forsoul_music_bot">ботом</a>.
+        <br>Для вас старались:</p></center>
     <div class="alert alert-success" role="alert">
         <center><h2>Михаил Стрельников (<a href="https://github.com/youngwhist">youngwhist</a>)</h2></center>
     </div>
-    <center><img src="/static/img/misha.png" alt="Михаил Стрельников (youngwhist)"></center>
+    <center><a href="https://github.com/youngwhist">
+        <img src="/static/img/misha.png" alt="Михаил Стрельников (youngwhist)" class="round"></a></center>
     <div class="alert alert-primary" role="alert">
-        <center><h3>Тимлид, работа с музыкой и базами данных</h3></center>
+        <center><h3>Тимлид, работа с музыкой, регистрацией на сайте и базой данных</h3></center>
     </div>
     <br>
     <div class="alert alert-success" role="alert">
         <center><h2>Владимир Кузнецов (<a href="https://github.com/Vovan4ikYT">Vovan4ikYT</a>)</h2></center>
     </div>
-    <center><img src="/static/img/vovan.jpg" alt="Владимир Кузнецов (Vovan4ikYT)"></center>
+    <center><a href="https://github.com/Vovan4ikYT">
+        <img src="/static/img/vovan.jpg" alt="Владимир Кузнецов (Vovan4ikYT)" class="round"></a></center>
     <div class="alert alert-primary" role="alert">
         <center><h3>Основная работа с сайтом, соединение аудиоэффектов и базы данных с сайтом</h3></center>
     </div>
@@ -39,10 +52,12 @@
     <div class="alert alert-success" role="alert">
         <center><h2>Владислав Горский (<a href="https://github.com/wladgor">wladgor</a>)</h2></center>
     </div>
-    <center><img src="/static/img/vlad.jpg" alt="Владислав Горский (wladgor)"></center>
+    <center><a href="https://github.com/wladgor">
+        <img src="/static/img/vlad.jpg" alt="Владислав Горский (wladgor)" class="round"></a></center>
     <div class="alert alert-primary" role="alert">
         <center><h3>Работа с ботом, соединение аудиоэффектов и базы данных с ботом</h3></center>
     </div>
-    <center><a href="/"><h1>Вернуться на главную</h1></a></center>
+    <br>
+    <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
 </body>
 </html>

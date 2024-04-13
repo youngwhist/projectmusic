@@ -1,0 +1,13 @@
+.rectangle {
+    width: 35%;
+    height: 70px;
+    border:1px solid;
+    margin:auto;
+    background: #1d2602;
+	   }
+.text_center {
+    font-size: 35px;
+    font-family: Comic Sans MS;
+    color: #ffffff;
+    text-align: center;
+	   }
