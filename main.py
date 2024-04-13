@@ -8,6 +8,7 @@ BOT_TOKEN = "6760985613:AAEYf8uj5RWPXQiGQRhs2j3YjFpUbhBhOck"
 
 # Состояния
 REGISTER, LOGIN, MAIN_MENU = range(3)
+BASS_FILE, BASS_VALUE = range(2)
 
 # База данных
 conn = sqlite3.connect('users.sqlite')
@@ -105,7 +106,7 @@ async def exit_process(update, context):
 # ---------------------------------------------------------------------------------------------------------------------
 
 # Блок кода с "каркасом" бота (logout, help)
-# --------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 async def help(update: Update, context: CallbackContext):
     await update.message.reply_text(
@@ -174,9 +175,44 @@ async def fast(update, context):
     await update.message.reply_text("Фаст")
 
 
-async def bass(update, context):
-    await update.message.reply_text("Басс буст")
+async def bass(update: Update, context: CallbackContext):
+    await update.message.reply_text("Отправьте файл")
+    # Устанавливаем следующее состояние - ожидание загрузки файла
+    context.user_data['next_state'] = BASS_FILE
 
+
+async def handle_bass_file(update: Update, context: CallbackContext):
+    # Получаем файл из сообщения
+    file = context.bot.get_file(update.message.document.file_id)
+    await file.download('bass_file.mp3')  # Сохраняем файл локально
+
+    # Запрашиваем у пользователя значение для обработки
+    await update.message.reply_text("Введите значение для обработки (целое число):")
+
+    # Устанавливаем следующее состояние - ожидание ввода значения
+    context.user_data['next_state'] = BASS_VALUE
+
+
+async def handle_bass_value(update: Update, context: CallbackContext):
+    try:
+        bass_value = int(update.message.text)
+    except ValueError:
+        await update.message.reply_text("Ошибка! Пожалуйста, введите целое число.")
+        return
+
+    # Выполняем обработку файла
+    processed_file = bass_boost('bass_file.mp3', bass_value)
+
+    # Отправляем обработанный файл пользователю
+    await update.message.reply_document(open(processed_file, 'rb'))
+
+    # Удаляем временный файл
+    os.remove('bass_file.mp3')
+
+    # Сбрасываем состояние
+    context.user_data.pop('next_state', None)
+
+    return ConversationHandler.END
 
 async def vocal_and_music(update, context):
     await update.message.reply_text("Музыка и звук")
@@ -224,9 +260,20 @@ def main():
         fallbacks=[]
     )
 
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler("bass", bass)],
+        states={
+            BASS_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_bass_value)],
+            BASS_FILE: [MessageHandler(filters.Document, handle_bass_file)],
+
+        },
+        fallbacks=[],
+    )
+
     # Обработчики
     application.add_handler(register_handler)
     application.add_handler(login_handler)
+    application.add_handler(conv_handler)
     exit_handler = CommandHandler("exit", exit_process)
     application.add_handler(exit_handler)
     logout_handler = CommandHandler("logout", logout)
