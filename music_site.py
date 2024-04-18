@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, send_file
 from werkzeug.utils import secure_filename
 import os
-from data import db_session
+from random import choice
+from data import db_session, gg_api
 from data.users import User
 from forms.user import RegisterForm, LoginForm
 from flask_login import LoginManager, login_user, login_required, logout_user
@@ -128,7 +129,11 @@ def upload_file():
 # Информация о сайте
 @app.route('/info', methods=['GET', 'POST'])
 def info():
-    return render_template('info.html')
+    secret_page = choice(range(0, 1000, 1))  # э̌ͅт̛̥͓͇͒̚о ͇̪̅̈́͘ͅещ̩̞̜̖͈̾͐́͆̑ё̧̢̛̛̖̕
+    # ͓͔̗̑̀͡ч̛͇̲̘͌̃т̺̺̐͘о̨̬͒̒ ̧̺̹͉̈͐̒͂я̥̒̒͢ ̢̊̉ ̳не̧̞̱͆̍̎ ̨̡̼͈̟̃̽͒̈̕
+    # п̯̤̻͑̔̀л͔͔͓̝̐͌̀͘а̛͚̖͎̜́͒̄н̪̅и̹̤̏̑р̽͢о̡͍̰̊̀͂͘ͅв͙̼̜͎̐̈́̃̕а̗̺̺͔͖͐̎̑̓͡л ̡̜̿̎͘͢
+    # э͚̞̕͝т̜̃о͖̠̟͂͐͝ ̟͍̻͌̓́з̩͂д͓̲͌͡е̜̩̳͛͂̀сь̰̜̻̓͗͡
+    return render_template('info.html', secret_page=secret_page)
 
 
 # Выбор операции
@@ -355,4 +360,5 @@ def download_file():
 
 if __name__ == '__main__':
     db_session.global_init("db/users.sqlite")
+    app.register_blueprint(gg_api.gg)
     app.run(port=8001)

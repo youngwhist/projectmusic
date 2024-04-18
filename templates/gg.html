@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="static/css/background.css">
+    <link rel="stylesheet" href="static/css/rectangle2.css">
+    <link rel="stylesheet" href="static/css/form_control.css">
+    <title>FORSOUL</title>
+</head>
+<body>
+    {% set button_style = "background-color: #1d2602;
+            color: #ffffff; width: 15%; height: 70px;
+            font-size: 25px; font-family: Comic Sans MS;" %}
+    {% if gg_is_here %}
+        <img src="/static/img/pashalka.gif" alt="Ох и зря ты сюда полез..." style="width: 100%;
+            height: 100%">
+    {% endif %}
+    <center><form action="{{ url_for('gg_api.set_gg')}}" method="post">
+    <center><div class="rectangle text_center" style="width: 60%">Вам был выдан доступ к
+        базе данных FORSOUL.</div></center>
+    <center><div class="rectangle text_center" style="width: 70%">Введите ID пользователя,
+        которого вы хотите удалить.</div></center>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <center><input type="number" id="id" min="1" name="id" placeholder="id"
+                   class="form-control" style="width: 15%; height: 60px"></center>
+    <br>
+    <br>
+    <input type="submit" name="submit_button" style="{{button_style}}" value="Удалить"></form></center>
+    <br>
+    <center><div class="rectangle text_center" style="width: 80%">{{message}}</div></center>
+    {% if us_found %}
+        <br>
+        <center><form action="{{ url_for('gg_api.gg_f')}}" method="post">
+        <input type="submit" name="submit_button" style="{{button_style}}" value="Да"></form></center>
+    {% endif %}
+    {% if gg_is_here %}
+        <center><p class="rectangle text_center" style="width: 80%">Но на будущее запомни:
+            никто никакие доступы просто так не даёт!</p></center>
+    {% endif %}
+    <br>
+    <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
+</body>
+</html>
