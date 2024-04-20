@@ -10,3 +10,4 @@ def bass_boost(file, zabushenn, boost):
 # file_path = "audio.wav"
 # boost = 10
 # bass_boost(file_path, file_path, boost)
+

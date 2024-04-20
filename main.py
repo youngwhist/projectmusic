@@ -1,14 +1,16 @@
+import os
 import sqlite3
 
 from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import Application, CommandHandler, ConversationHandler, MessageHandler, filters, CallbackContext
 
+from bass import bass_boost
+from fast_or_slow import slowfast_music
 BOT_TOKEN = "6760985613:AAEYf8uj5RWPXQiGQRhs2j3YjFpUbhBhOck"
 # ссылка на бота https://t.me/forsoul_music_bot
 
 # Состояния
-REGISTER, LOGIN, MAIN_MENU = range(3)
-BASS_FILE, BASS_VALUE = range(2)
+REGISTER, LOGIN, WAITING_FOR_AUDIO, WAITING_FOR_INT_VALUE = range(4)
 
 # База данных
 conn = sqlite3.connect('users.sqlite')
@@ -147,9 +149,9 @@ async def logout(update: Update, context: CallbackContext):
 
 async def start_redact(update, context):
     redact_markup = ReplyKeyboardMarkup([
-        ['/ekvalaizer', '/reverb', '/slow'],
-        ['/fast', '/bass', '/vocal_and_music'],
+        ['/ekvalaizer', '/reverb', '/slow_fast'],
         ['/effect', '/noise_delete', '/gross_beat'],
+        ['/bass', '/vocal_and_music'],
         ['/close']
     ], one_time_keyboard=False)
 
@@ -167,52 +169,80 @@ async def reverb(update, context):
     await update.message.reply_text("Ревёрб")
 
 
-async def slow(update, context):
-    await update.message.reply_text("Слоу")
-
-
-async def fast(update, context):
-    await update.message.reply_text("Фаст")
+async def slow_fast(update, context):
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл."
+    )
+    return WAITING_FOR_AUDIO
 
 
 async def bass(update: Update, context: CallbackContext):
-    await update.message.reply_text("Отправьте файл")
-    # Устанавливаем следующее состояние - ожидание загрузки файла
-    context.user_data['next_state'] = BASS_FILE
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл."
+    )
+    return WAITING_FOR_AUDIO
 
 
-async def handle_bass_file(update: Update, context: CallbackContext):
-    # Получаем файл из сообщения
-    file = context.bot.get_file(update.message.document.file_id)
-    await file.download('bass_file.mp3')  # Сохраняем файл локально
+# Функция для обработки аудиофайлов
+async def handle_audio(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio
+    if audio_file:
+        # Получаем файл ID
+        file_id = audio_file.file_id
+        # Используем файл ID для получения файла
+        new_file = await context.bot.get_file(file_id)
+        # Скачиваем файл
+        local_file_path = await new_file.download_to_drive('audio.wav')
+        # Сохраняем путь к локальному файлу в user_data для дальнейшего использования
+        context.user_data['audio_file_path'] = local_file_path
+        await update.message.reply_text("Спасибо! Теперь введи целое число.")
+        return WAITING_FOR_INT_VALUE
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
 
-    # Запрашиваем у пользователя значение для обработки
-    await update.message.reply_text("Введите значение для обработки (целое число):")
 
-    # Устанавливаем следующее состояние - ожидание ввода значения
-    context.user_data['next_state'] = BASS_VALUE
+# Функция для обработки целочисленных значений
+async def handle_int_value_bass(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    # Получаем путь к локальному файлу
+    local_file_path = str(context.user_data.get('audio_file_path'))
 
-
-async def handle_bass_value(update: Update, context: CallbackContext):
-    try:
-        bass_value = int(update.message.text)
-    except ValueError:
-        await update.message.reply_text("Ошибка! Пожалуйста, введите целое число.")
-        return
-
-    # Выполняем обработку файла
-    processed_file = bass_boost('bass_file.mp3', bass_value)
-
-    # Отправляем обработанный файл пользователю
-    await update.message.reply_document(open(processed_file, 'rb'))
-
-    # Удаляем временный файл
-    os.remove('bass_file.mp3')
-
-    # Сбрасываем состояние
-    context.user_data.pop('next_state', None)
+    boosted_file_path = bass_boost(local_file_path, local_file_path, int_value)
+    if local_file_path:
+        # Отправляем аудиофайл пользователю
+        with open(boosted_file_path, 'rb') as audio_file:
+            await update.message.reply_audio(audio=audio_file)
+        # Удаляем файл с локального диска
+        os.remove(local_file_path)
+    else:
+        await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
 
     return ConversationHandler.END
+
+
+async def handle_int_value_slowfast(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    # Получаем путь к локальному файлу
+    local_file_path = str(context.user_data.get('audio_file_path'))
+
+    boosted_file_path = slow_fast(local_file_path, int_value)
+    if local_file_path:
+        # Отправляем аудиофайл пользователю
+        with open(boosted_file_path, 'rb') as audio_file:
+            await update.message.reply_audio(audio=audio_file)
+        # Удаляем файл с локального диска
+        os.remove(local_file_path)
+    else:
+        await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+    return ConversationHandler.END
+
+
+def cancel(update: Update, context: CallbackContext):
+    update.message.reply_text('Операция отменена.')
+    return ConversationHandler.END
+
 
 async def vocal_and_music(update, context):
     await update.message.reply_text("Музыка и звук")
@@ -260,20 +290,30 @@ def main():
         fallbacks=[]
     )
 
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("bass", bass)],
+    conv_handler_bass = ConversationHandler(
+        entry_points=[CommandHandler('bass', bass)],
         states={
-            BASS_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_bass_value)],
-            BASS_FILE: [MessageHandler(filters.Document, handle_bass_file)],
-
+            WAITING_FOR_AUDIO: [MessageHandler(filters.AUDIO, handle_audio)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_bass)]
         },
-        fallbacks=[],
+        fallbacks=[CommandHandler('cancel', cancel)]
     )
+
+    conv_handler_slow_fast = ConversationHandler(
+        entry_points=[CommandHandler('slow_fast', slow_fast)],
+        states={
+            WAITING_FOR_AUDIO: [MessageHandler(filters.AUDIO, handle_audio)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_slowfast)]
+        },
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+
 
     # Обработчики
     application.add_handler(register_handler)
     application.add_handler(login_handler)
-    application.add_handler(conv_handler)
+    application.add_handler(conv_handler_bass)
+    application.add_handler(conv_handler_slow_fast)
     exit_handler = CommandHandler("exit", exit_process)
     application.add_handler(exit_handler)
     logout_handler = CommandHandler("logout", logout)
@@ -286,8 +326,7 @@ def main():
     application.add_handler(CommandHandler("about", about))
     application.add_handler(CommandHandler("ekvalaizer", ekvalaizer))
     application.add_handler(CommandHandler("reverb", reverb))
-    application.add_handler(CommandHandler("slow", slow))
-    application.add_handler(CommandHandler("fast", fast))
+    application.add_handler(CommandHandler("slow_fast", slow_fast))
     application.add_handler(CommandHandler("bass", bass))
     application.add_handler(CommandHandler("vocal_and_music", vocal_and_music))
     application.add_handler(CommandHandler("effect", effect))
