@@ -16,7 +16,7 @@ def set_gg():
             return render_template('gg.html', message='Ошибка: Пользователь не найден.')
         else:
             us_found = True
-            return render_template('gg.html', message=f'Вы действительно хотите удалить '
+            return render_template('gg.html', message=f'Вы точно хотите удалить '
                                                       f'пользователя {user.login}?', us_found=us_found)
     return render_template('gg.html')
 
@@ -25,4 +25,4 @@ def set_gg():
 def gg_f():
     gg_is_here = True
     return render_template('gg.html', message=f'Ох и зря ты сюда полез... Ладно, не бойся, '
-                                              f'мы тебя разыграли.', gg_is_here=gg_is_here)
+                                              f'это розыгрыш.', gg_is_here=gg_is_here)
