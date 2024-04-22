@@ -1,9 +1,9 @@
 .rectangle {
-    width: 15%;
+    width: 20%;
     height: 70px;
     border:1px solid;
     margin:auto;
-    background: #1d2602;
+    background: #585858;
 	   }
 .text_center {
     font-size: 50px;

@@ -1,9 +1,9 @@
 .form-control {
-    width: 30%;
+    width: 45%;
     height: 70px;
     border:1px solid;
     margin:auto;
-    background: #1d2602;
+    background: #585858;
     color: #ffffff;
     font-size: 45px;
     font-family: Comic Sans MS;
@@ -11,11 +11,11 @@
 	   }
 
 .form-control:focus {
-    width: 30%;
+    width: 40%;
     height: 70px;
     border:1px solid;
     margin:auto;
-    background: #f6ffdb;
+    background: #d5d8cb;
     color: #000000;
     font-size: 45px;
     font-family: Comic Sans MS;
