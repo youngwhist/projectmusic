@@ -1,0 +1,5 @@
+pydub==0.25.1
+numpy==1.26.3
+soundfile==0.12.1
+scipy==1.13.0
+python-telegram-bot==13.7
