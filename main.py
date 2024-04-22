@@ -5,12 +5,26 @@ from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import Application, CommandHandler, ConversationHandler, MessageHandler, filters, CallbackContext
 
 from bass import bass_boost
+from effects import effectss
 from fast_or_slow import slowfast_music
+from grossbit import gross_bit
+from nonoise import remove_noise
+from obrez import obrezkaa
+from razdel_voice import split_audioo
+from reverb import reverbb
+from reverse import reverse_audio_filee
+
+
+def chisl(s):
+    return all(char.isdigit() or char == '.' for char in s)
+
+
 BOT_TOKEN = "6760985613:AAEYf8uj5RWPXQiGQRhs2j3YjFpUbhBhOck"
 # ссылка на бота https://t.me/forsoul_music_bot
 
+
 # Состояния
-REGISTER, LOGIN, WAITING_FOR_AUDIO, WAITING_FOR_INT_VALUE = range(4)
+REGISTER, LOGIN, WAITING_FOR_AUDIO, WAITING_FOR_INT_VALUE, = range(4)
 
 # База данных
 conn = sqlite3.connect('users.sqlite')
@@ -118,11 +132,11 @@ async def help(update: Update, context: CallbackContext):
 
 
 async def how_use_bot(update: Update, context: CallbackContext):
-    await update.message.reply_text("Тут текст как юзать бота")
+    await update.message.reply_text("Что бы воспользоваться функционалам, перейдите в /start_redact. Выберите метод редактирования который вам нужен, после чего вызовите функцию через клавиатуру которая внизу экрана. После этого делайте то что вам скажет бот. После редактирования файла он скинет вам итоговый результат и вы можете его скачать.")
 
 
 async def about(update: Update, context: CallbackContext):
-    await update.message.reply_text("Тут текст о проекте")
+    await update.message.reply_text("Проект представляет бесплатный ресурс по редактированию звуковых файлов и дальшейшим их сохранением. Над проектом работали Стрельников Михаил, Горский Владислав, Кузнецов Владимир. Проект опенсурс и вы можете ознакомиться с ним на github https://github.com/youngwhist/projectmusic/. Так же проект размещён на сайте и вы можете использовать его вместо бота.")
 
 
 async def close(update: Update, context: CallbackContext):
@@ -144,16 +158,17 @@ async def logout(update: Update, context: CallbackContext):
 # Конец блока кода
 # --------------------------------------------------------------------------------------------------------------------
 
-# Блок кода с функциями
+# Блок кода с вызовом функций
 # --------------------------------------------------------------------------------------------------------------------
 
 async def start_redact(update, context):
     redact_markup = ReplyKeyboardMarkup([
-        ['/ekvalaizer', '/reverb', '/slow_fast'],
+        ['/reverse', '/reverb', '/slow_fast'],
         ['/effect', '/noise_delete', '/gross_beat'],
-        ['/bass', '/vocal_and_music'],
+        ['/bass', '/vocal_and_music', '/obrezka'],
         ['/close']
     ], one_time_keyboard=False)
+    await update.message.reply_text("ВНИМАНИЕ! НЕ пытайтесь вызвать другие команды пока находитесь в моменте выполнения одной. Это обернётся ошибкой. Что бы выйти из функции в момент выполнения введите команду /cancel_funct")
 
     await update.message.reply_text(
         "Выберите опцию для редактирования:",
@@ -161,103 +176,67 @@ async def start_redact(update, context):
     )
 
 
-async def ekvalaizer(update, context):
-    await update.message.reply_text("Эквалайзер")
+async def reverse(update, context):
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
+    )
+    return WAITING_FOR_AUDIO
 
 
 async def reverb(update, context):
-    await update.message.reply_text("Ревёрб")
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
+    )
+    return WAITING_FOR_AUDIO
 
 
 async def slow_fast(update, context):
     await update.message.reply_text(
-        "Привет! Пришли мне звуковой файл."
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
     )
     return WAITING_FOR_AUDIO
 
 
 async def bass(update: Update, context: CallbackContext):
     await update.message.reply_text(
-        "Привет! Пришли мне звуковой файл."
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
     )
     return WAITING_FOR_AUDIO
 
 
-# Функция для обработки аудиофайлов
-async def handle_audio(update: Update, context: CallbackContext) -> int:
-    audio_file = update.message.audio
-    if audio_file:
-        # Получаем файл ID
-        file_id = audio_file.file_id
-        # Используем файл ID для получения файла
-        new_file = await context.bot.get_file(file_id)
-        # Скачиваем файл
-        local_file_path = await new_file.download_to_drive('audio.wav')
-        # Сохраняем путь к локальному файлу в user_data для дальнейшего использования
-        context.user_data['audio_file_path'] = local_file_path
-        await update.message.reply_text("Спасибо! Теперь введи целое число.")
-        return WAITING_FOR_INT_VALUE
-    else:
-        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
-        return WAITING_FOR_AUDIO
-
-
-# Функция для обработки целочисленных значений
-async def handle_int_value_bass(update: Update, context: CallbackContext) -> int:
-    int_value = update.message.text
-    # Получаем путь к локальному файлу
-    local_file_path = str(context.user_data.get('audio_file_path'))
-
-    boosted_file_path = bass_boost(local_file_path, local_file_path, int_value)
-    if local_file_path:
-        # Отправляем аудиофайл пользователю
-        with open(boosted_file_path, 'rb') as audio_file:
-            await update.message.reply_audio(audio=audio_file)
-        # Удаляем файл с локального диска
-        os.remove(local_file_path)
-    else:
-        await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
-
-    return ConversationHandler.END
-
-
-async def handle_int_value_slowfast(update: Update, context: CallbackContext) -> int:
-    int_value = update.message.text
-    # Получаем путь к локальному файлу
-    local_file_path = str(context.user_data.get('audio_file_path'))
-
-    boosted_file_path = slow_fast(local_file_path, int_value)
-    if local_file_path:
-        # Отправляем аудиофайл пользователю
-        with open(boosted_file_path, 'rb') as audio_file:
-            await update.message.reply_audio(audio=audio_file)
-        # Удаляем файл с локального диска
-        os.remove(local_file_path)
-    else:
-        await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
-
-    return ConversationHandler.END
-
-
-def cancel(update: Update, context: CallbackContext):
-    update.message.reply_text('Операция отменена.')
-    return ConversationHandler.END
-
-
 async def vocal_and_music(update, context):
-    await update.message.reply_text("Музыка и звук")
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
+    )
+    return WAITING_FOR_AUDIO
 
 
 async def effect(update, context):
-    await update.message.reply_text("Добавление эффектов")
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
+    )
+    return WAITING_FOR_AUDIO
+
+
+async def obrezka(update, context):
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
+    )
+    return WAITING_FOR_AUDIO
 
 
 async def noise_delete(update, context):
-    await update.message.reply_text("Удаление шума")
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
+    )
+    return WAITING_FOR_AUDIO
 
 
 async def gross_beat(update, context):
-    await update.message.reply_text("Гросс бит")
+    await update.message.reply_text(
+        "Привет! Пришли мне звуковой файл. Что бы выйти из команды введи /cancel_funct"
+    )
+    return WAITING_FOR_AUDIO
 
 
 async def close_redact(update, context):
@@ -267,9 +246,402 @@ async def close_redact(update, context):
     )
 
 
+async def cancel_funct(update: Update, context: CallbackContext):
+    await update.message.reply_text('Функция прервана. ')
+    return ConversationHandler.END
+
+
 # Конец блока кода
 # --------------------------------------------------------------------------------------------------------------------
 
+# Блок кода с обработкой функций
+# --------------------------------------------------------------------------------------------------------------------
+
+async def handle_audio_fastslow(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            await update.message.reply_text(
+                "Спасибо! Теперь введи целое число если хочешь ускорить трек, а если замедлить то нецелое число.")
+            return WAITING_FOR_INT_VALUE
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+async def handle_int_value_fastslow(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    if int_value:
+        if chisl(int_value):
+            int_value = float(int_value)
+            local_file_path = str(context.user_data.get('audio_file_path'))
+            if local_file_path:
+                with open(local_file_path, 'rb') as audio_file:
+                    slowfast_music(local_file_path, int_value)
+                    await update.message.reply_audio(audio=audio_file)
+
+                os.remove(local_file_path)
+            else:
+                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+            return ConversationHandler.END
+        else:
+            await update.message.reply_text("Введите число.")
+
+
+async def handle_audio_bass(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            await update.message.reply_text("Спасибо! Теперь введи целое число.")
+            return WAITING_FOR_INT_VALUE
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+async def handle_int_value_bass(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    if int_value:
+        if chisl(int_value):
+            int_value = int(int_value)
+            local_file_path = context.user_data.get('audio_file_path')
+            if local_file_path:
+                with open(local_file_path, 'rb') as audio_file:
+                    bass_boost(local_file_path, local_file_path, int_value)
+                    await update.message.reply_audio(audio=audio_file)
+
+                os.remove(local_file_path)
+            else:
+                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+            return ConversationHandler.END
+
+    else:
+        await update.message.reply_text("Введите целое число.")
+
+
+async def handle_audio_grossbeat(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            await update.message.reply_text("Спасибо! Теперь введи целое число.")
+            return WAITING_FOR_INT_VALUE
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+async def handle_int_value_grossbeat(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    if int_value:
+        if chisl(int_value):
+            int_value = int(update.message.text)
+            local_file_path = str(context.user_data.get('audio_file_path'))
+            if local_file_path:
+                with open(local_file_path, 'rb') as audio_file:
+                    gross_bit(local_file_path, int_value)
+                    await update.message.reply_audio(audio=audio_file)
+
+                os.remove(local_file_path)
+            else:
+                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+            return ConversationHandler.END
+        else:
+            await update.message.reply_text("Введите целое число.")
+
+
+async def handle_audio_nonoise(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            await update.message.reply_text("Спасибо! Теперь введи целое число.")
+            return WAITING_FOR_INT_VALUE
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+async def handle_int_value_nonoise(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    if int_value:
+        if chisl(int_value):
+            int_value = int(update.message.text)
+            local_file_path = str(context.user_data.get('audio_file_path'))
+            if local_file_path:
+                with open(local_file_path, 'rb') as audio_file:
+                    remove_noise(local_file_path, int_value)
+                    await update.message.reply_audio(audio=audio_file)
+
+                os.remove(local_file_path)
+            else:
+                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+            return ConversationHandler.END
+        else:
+            await update.message.reply_text("Введите целое число.")
+
+
+async def handle_audio_obrez(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            await update.message.reply_text(
+                "Спасибо! Теперь введите 2 целых числа, первое - начало обрезания второе конец.")
+            return WAITING_FOR_INT_VALUE
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+async def handle_int_value_obrez(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    parts = int_value.split()
+    if len(parts) == 2:
+        if chisl(int_value):
+            param1, param2 = parts
+            param1 = int(param1)
+            param2 = int(param2)
+
+            local_file_path = str(context.user_data.get('audio_file_path'))
+
+            if local_file_path:
+                with open(local_file_path, 'rb') as audio_file:
+                    obrezkaa(local_file_path, local_file_path, param1, param2)
+                    await update.message.reply_audio(audio=audio_file)
+
+                os.remove(local_file_path)
+            else:
+                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+            return ConversationHandler.END
+        else:
+            await update.message.reply_text("Введите 2 целых числа.")
+    else:
+        await update.message.reply_text("Введите 2 целых числа.")
+
+
+async def handle_audio_reverse(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:  # Добавьте другие расширения, если нужно
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            with open(local_file_path, 'rb') as audio_file:
+                reverse_audio_filee(local_file_path, local_file_path)
+                await update.message.reply_audio(audio=audio_file)
+
+            os.remove(local_file_path)
+
+            return ConversationHandler.END
+
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+async def handle_audio_reverb(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            await update.message.reply_text("Спасибо! Теперь введите 2 целых числа.")
+            return WAITING_FOR_INT_VALUE
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+# Функция для обработки целочисленных значений
+async def handle_int_value_reverb(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    parts = int_value.split()
+    if len(parts) == 2:
+        if chisl(int_value):
+            param1, param2 = parts
+            param1 = int(param1)
+            param2 = int(param2)
+
+            local_file_path = str(context.user_data.get('audio_file_path'))
+
+            if local_file_path:
+                with open(local_file_path, 'rb') as audio_file:
+                    reverbb(local_file_path, local_file_path, param1, param2)
+                    await update.message.reply_audio(audio=audio_file)
+
+                os.remove(local_file_path)
+            else:
+                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+            return ConversationHandler.END
+        else:
+            await update.message.reply_text("Введите 2 целых числа.")
+    else:
+        await update.message.reply_text("Введите 2 целых числа.")
+
+
+async def handle_audio_vocal_and_music(update: Update, context: CallbackContext) -> int:
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            await update.message.reply_text("Спасибо! Теперь введи целое число.")
+            return WAITING_FOR_INT_VALUE
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+async def handle_int_value_vocal_and_music(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    if int_value:
+        if chisl(int_value):
+            int_value = int(update.message.text)
+            local_file_path = str(context.user_data.get('audio_file_path'))
+            voice = 'voice_audio.waw'
+            music = 'music_auido.waw'
+            if local_file_path:
+                with open(local_file_path, 'rb') as audio_file:
+                    split_audioo(local_file_path, voice, music, int_value)
+
+                await update.message.reply_audio(audio=voice)
+                await update.message.reply_audio(audio=music)
+
+                os.remove(local_file_path)
+                os.remove(voice)
+                os.remove(music)
+            else:
+                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+            return ConversationHandler.END
+    else:
+        await update.message.reply_text("Введите целое число.")
+
+
+async def handle_audio_effects(update: Update, context: CallbackContext) -> int:
+    context.user_data['blocked'] = True
+    audio_file = update.message.audio or update.message.document
+    if audio_file:
+        file_extension = os.path.splitext(audio_file.file_name)[1].lower()
+        if file_extension in ['.wav', '.mp3', '.ogg', '.flac', '.m4a']:  # Добавьте другие расширения, если нужно
+            file_id = audio_file.file_id
+            new_file = await context.bot.get_file(file_id)
+            local_file_path = await new_file.download_to_drive(f'audio{file_extension}')
+            context.user_data['audio_file_path'] = local_file_path
+            await update.message.reply_text("Спасибо! Теперь введите 5 целых чисел.")
+
+            return WAITING_FOR_INT_VALUE
+        else:
+            await update.message.reply_text(
+                "Пожалуйста, пришли звуковой файл в поддерживаемом формате (WAV, MP3, OGG, FLAC, M4A).")
+            return WAITING_FOR_AUDIO
+    else:
+        await update.message.reply_text("Пожалуйста, пришли звуковой файл.")
+        return WAITING_FOR_AUDIO
+
+
+async def handle_int_value_effects(update: Update, context: CallbackContext) -> int:
+    int_value = update.message.text
+    parts = int_value.split()
+    if len(parts) == 2:
+        if chisl(int_value):
+            param1, param2, param3, param4, param5 = parts
+            param1 = int(param1)
+            param2 = int(param2)
+            param3 = int(param3)
+            param4 = int(param4)
+            param5 = int(param5)
+            local_file_path = str(context.user_data.get('audio_file_path'))
+            if local_file_path:
+                with open(local_file_path, 'rb') as audio_file:
+                    effectss(local_file_path, param1, param2, param3, param4, param5)
+                    await update.message.reply_audio(audio=audio_file)
+
+                os.remove(local_file_path)
+            else:
+                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+            return ConversationHandler.END
+        else:
+            await update.message.reply_text("Введите 5 целых чисел.")
+
+    else:
+        await update.message.reply_text("Введите 5 целых чисел.")
+
+
+# Конец блока кода
+# --------------------------------------------------------------------------------------------------------------------
+
+# Блок кода с запуском бота
+# --------------------------------------------------------------------------------------------------------------------
 def main():
     application = Application.builder().token(BOT_TOKEN).build()
 
@@ -290,30 +662,99 @@ def main():
         fallbacks=[]
     )
 
+    # Прочие обработчики для функций
     conv_handler_bass = ConversationHandler(
         entry_points=[CommandHandler('bass', bass)],
         states={
-            WAITING_FOR_AUDIO: [MessageHandler(filters.AUDIO, handle_audio)],
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_bass)],
             WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_bass)]
         },
-        fallbacks=[CommandHandler('cancel', cancel)]
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
     )
 
     conv_handler_slow_fast = ConversationHandler(
         entry_points=[CommandHandler('slow_fast', slow_fast)],
         states={
-            WAITING_FOR_AUDIO: [MessageHandler(filters.AUDIO, handle_audio)],
-            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_slowfast)]
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_fastslow)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_fastslow)]
         },
-        fallbacks=[CommandHandler('cancel', cancel)]
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
     )
 
+    conv_handler_grossbit = ConversationHandler(
+        entry_points=[CommandHandler('gross_beat', gross_beat)],
+        states={
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_grossbeat)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_grossbeat)]
+        },
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
+    )
 
-    # Обработчики
+    conv_handler_nonoise = ConversationHandler(
+        entry_points=[CommandHandler('noise_delete', noise_delete)],
+        states={
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_nonoise)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_nonoise)]
+        },
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
+    )
+
+    conv_handler_obrez = ConversationHandler(
+        entry_points=[CommandHandler('obrezka', obrezka)],
+        states={
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_obrez)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_obrez)]
+        },
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
+    )
+
+    conv_handler_reverse = ConversationHandler(
+        entry_points=[CommandHandler('reverse', reverse)],
+        states={
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_reverse)],
+        },
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
+    )
+
+    conv_handler_reverb = ConversationHandler(
+        entry_points=[CommandHandler('reverb', reverb)],
+        states={
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_reverb)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_reverb)]
+        },
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
+    )
+
+    conv_handler_vocal_and_music = ConversationHandler(
+        entry_points=[CommandHandler('vocal_and_music', vocal_and_music)],
+        states={
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_vocal_and_music)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_vocal_and_music)]
+        },
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
+    )
+
+    conv_handler_effects = ConversationHandler(
+        entry_points=[CommandHandler('effect', effect)],
+        states={
+            WAITING_FOR_AUDIO: [MessageHandler(filters.Document.ALL, handle_audio_effects)],
+            WAITING_FOR_INT_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_int_value_effects)]
+        },
+        fallbacks=[CommandHandler('cancel_funct', cancel_funct)]
+    )
+
+    # Обработчики и запуск кода
     application.add_handler(register_handler)
     application.add_handler(login_handler)
     application.add_handler(conv_handler_bass)
     application.add_handler(conv_handler_slow_fast)
+    application.add_handler(conv_handler_grossbit)
+    application.add_handler(conv_handler_nonoise)
+    application.add_handler(conv_handler_obrez)
+    application.add_handler(conv_handler_reverse)
+    application.add_handler(conv_handler_reverb)
+    application.add_handler(conv_handler_vocal_and_music)
+    application.add_handler(conv_handler_effects)
     exit_handler = CommandHandler("exit", exit_process)
     application.add_handler(exit_handler)
     logout_handler = CommandHandler("logout", logout)
@@ -322,14 +763,16 @@ def main():
     application.add_handler(CommandHandler("start_redact", start_redact))
     application.add_handler(CommandHandler("help", help))
     application.add_handler(CommandHandler("close", close))
+    application.add_handler(CommandHandler("cancel_funct", cancel_funct))
     application.add_handler(CommandHandler("how_use_bot", how_use_bot))
     application.add_handler(CommandHandler("about", about))
-    application.add_handler(CommandHandler("ekvalaizer", ekvalaizer))
+    application.add_handler(CommandHandler("reverse", reverse))
     application.add_handler(CommandHandler("reverb", reverb))
     application.add_handler(CommandHandler("slow_fast", slow_fast))
     application.add_handler(CommandHandler("bass", bass))
     application.add_handler(CommandHandler("vocal_and_music", vocal_and_music))
     application.add_handler(CommandHandler("effect", effect))
+    application.add_handler(CommandHandler("obrezka", obrezka))
     application.add_handler(CommandHandler("noise_delete", noise_delete))
     application.add_handler(CommandHandler("gross_beat", gross_beat))
     application.add_handler(CommandHandler("close_redact", close_redact))
