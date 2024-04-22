@@ -1,0 +1,10 @@
+pydub
+flask
+werkzeug
+flask_login
+numpy
+scipy
+sqlalchemy
+flask_wtf
+wtforms
+soundfile
