@@ -22,6 +22,20 @@ app = Flask(__name__)
 upload_folder = os.path.join('static', 'snd')
 extensions = ['mp3', 'wav', 'ogg', 'flac']  # Подходящие расширения
 
+if __name__ == '__main__':
+    db_session.global_init("db/users.sqlite")  # Подключение к БД
+    app.register_blueprint(gg_api.gg)  # н̧̘̯̝͈̣̃̄́̈́͘͢͝͠е̡͈͕̘͓͈̯̪͐̋̀̓̿̎͛͗ ̢͚̦̮̻̀͛̒̿̄
+    # в̻̙̩̺͈̩̾̒̇͊͑͞к̛͓͕̖͉̰̫̖͓̋͛́̿͂͘͝л̧̨̀̕ю̬͙̖̦̈́͒̀̕
+    # ч̧̢̲͎̥̙̓̅͂͒̅͋а̲̥̱͍͓͈̄̈̄͛̅͌͂͟т̥̰̰͖̬͈͑́̾͂̌̀͆ͅь̗̝͓̙̞͉͆̉͐̇̀̄̈̓͢͢,̢̬̻̞͎̻̐̒͑̾̉̚͜͠ ̧̛͕̣̥̱͑́̀̎
+    # о̤̳̞̙͕̥̐̒̿̅̏̒п̩̓а̻̗̳̭̝̬͎̳͊̊̄͋͊̉̉̊̾͜с͓͕͉̃̕͡н̨͕̗̝̪̮͍̲̭̂̌̎́̋̑̉̿͐̃͢о̡̨̢̳̻̘̘̼̞̖̋̿͐̀͆͒͐̈́̈̇
+
+# Диапазоны функций работы со звуком
+bass_diapason = range(1, 101, 1)
+fast_slow_diapason = \
+    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
+noise_diapason = range(1, 21, 1)
+reverb_diapason = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
 app.config['UPLOAD'] = upload_folder
 app.config['SECRET_KEY'] = 'forsoul_secretkey'
 login_manager = LoginManager()
@@ -29,7 +43,6 @@ login_manager.init_app(app)
 
 audio_sound = ''  # Путь до текущего звука
 new_sound = ''  # Путь до нового звука
-eq_list_count = []  # Список параметров для эквалайзера
 
 
 # Регистрация
@@ -37,6 +50,10 @@ eq_list_count = []  # Список параметров для эквалайз�
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        if len(form.password.data) < 8:
+            return render_template('register.html',
+                                   form=form,
+                                   message="Пароль слишком короткий")
         if form.password.data != form.password_again.data:
             return render_template('register.html',
                                    form=form,
@@ -103,12 +120,13 @@ def upload_file():
             os.remove(f'static/snd/{name}')
     audio_sound = ''  # Обновление пути до старого файла
     new_sound = ''  # Обновление пути до нового файла
-    eq_list_count.clear()  # Очистка параметров эквалайзера
 
     # Загрузка файла
     if request.method == 'POST':
         file = request.files['snd']
         filename = secure_filename(file.filename)
+        if filename == '':
+            return render_template('error.html', error='Не выбран файл')
         if filename[-3:] not in extensions:
             return render_template('error.html', error='Неправильное расширение файла')
         elif (filename == 'fx1.wav' or
@@ -123,7 +141,7 @@ def upload_file():
         sound = os.path.join(app.config['UPLOAD'], filename)
         audio_sound = sound
         return redirect('/redact')
-    return render_template('base.html')
+    return render_template('main.html')
 
 
 # Информация о сайте
@@ -134,6 +152,12 @@ def info():
     # п̯̤̻͑̔̀л͔͔͓̝̐͌̀͘а̛͚̖͎̜́͒̄н̪̅и̹̤̏̑р̽͢о̡͍̰̊̀͂͘ͅв͙̼̜͎̐̈́̃̕а̗̺̺͔͖͐̎̑̓͡л ̡̜̿̎͘͢
     # э͚̞̕͝т̜̃о͖̠̟͂͐͝ ̟͍̻͌̓́з̩͂д͓̲͌͡е̜̩̳͛͂̀сь̰̜̻̓͗͡
     return render_template('info.html', secret_page=secret_page)
+
+
+# Инструкция по пользованию сайтом
+@app.route('/guide', methods=['GET', 'POST'])
+def guide():
+    return render_template('guide.html')
 
 
 # Выбор операции
@@ -147,14 +171,12 @@ def operation_choose():
 def fast_slow():
     global new_sound  # Путь до нового файла записывается в глобальную переменную, иначе сайт его не распознаёт
     if request.method == 'POST':
-        x = request.form.get("fs_percent")  # Получение значения
-        diapason = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
-        # Диапазон допустимых значений (с дробными значениями нельзя делать range)
+        fs_x = request.form.get("fs_percent")  # Получение значения
         try:
-            if float(x) not in diapason:
+            if float(fs_x) not in fast_slow_diapason:
                 return render_template('error.html', error='Задано значение не из диапазона')
             else:
-                new_sound = slowfast_music(audio_sound, float(x))
+                new_sound = slowfast_music(audio_sound, float(fs_x))
                 new_sound.export('static/snd/result.wav', format="wav")
                 os.remove(audio_sound)
                 return redirect('/new_file')
@@ -179,13 +201,12 @@ def reverse():
 def bast_boost():
     global new_sound
     if request.method == 'POST':
-        x = request.form.get("bass_percent")
-        diapason = range(1, 101, 1)
+        bass_x = request.form.get("bass_percent")
         try:
-            if int(x) not in diapason:
+            if int(bass_x) not in bass_diapason:
                 return render_template('error.html', error='Задано значение не из диапазона')
             else:
-                new_sound = bass_boost(audio_sound, 'static/snd/result.wav', int(x))
+                new_sound = bass_boost(audio_sound, 'static/snd/result.wav', int(bass_x))
                 os.remove(audio_sound)
                 return redirect('/new_file')
         except ValueError:
@@ -198,13 +219,12 @@ def bast_boost():
 def no_noise():
     global new_sound
     if request.method == 'POST':
-        x = request.form.get("noise_percent")
-        diapason = range(1, 21, 1)
+        noise_x = request.form.get("noise_percent")
         try:
-            if int(x) not in diapason:
+            if int(noise_x) not in noise_diapason:
                 return render_template('error.html', error='Задано значение не из диапазона')
             else:
-                new_sound = remove_noise(audio_sound, int(x))
+                new_sound = remove_noise(audio_sound, int(noise_x))
                 os.remove(audio_sound)
                 return redirect('/new_file')
         except ValueError:
@@ -217,13 +237,12 @@ def no_noise():
 def reverb():
     global new_sound
     if request.method == 'POST':
-        x, y = request.form.get("volume"), request.form.get("mix")
-        diapason = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        volume, mix = request.form.get("volume"), request.form.get("mix")
         try:
-            if float(x) not in diapason and float(y) not in diapason:
+            if float(volume) not in reverb_diapason and float(mix) not in reverb_diapason:
                 return render_template('error.html', error='Задано(ы) значение(я) не из диапазона')
             else:
-                new_sound = reverb_sound(audio_sound, 'static/snd/result.wav', float(x), float(y))
+                new_sound = reverb_sound(audio_sound, 'static/snd/result.wav', float(volume), float(mix))
                 os.remove(audio_sound)
                 return redirect('/new_file')
         except ValueError:
@@ -231,42 +250,30 @@ def reverb():
     return render_template('reverb.html', sound=audio_sound)
 
 
-# Эквалайзер (страница 1)
-@app.route('/equalize_1', methods=['GET', 'POST'])
-def equalize_1():
-    if audio_sound[-3:] != 'wav':  # Проверка расширения файла
+# Эквалайзер
+@app.route('/equalizer', methods=['GET', 'POST'])
+def music_equalizer():
+    global new_sound
+    # Проверка расширения файла
+    if audio_sound[-3:] != 'wav':
         return render_template('equalize_error.html')
     else:
         if request.method == 'POST':
+            freq_start, freq_end, freq_step = (request.form.get("freq_start"),
+                                               request.form.get("freq_end"),
+                                               request.form.get("freq_step"))  # Частоты
+            coeff_start, coeff_end, coeff_step = (request.form.get("coeff_start"),
+                                                  request.form.get("coeff_end"),
+                                                  request.form.get("coeff_step"))  # Коэффициенты
             try:
-                x = request.form.get("parameters")
-                for i in range(int(x)):
-                    eq_list_count.append(i + 1)  # Пополнение списка параметрами
-                    # (так как html переберает только сам список, а не по его длине)
-                return redirect('/equalize_2')  # Перенаправление на страницу с самим эквалайзером
+                freqs = [int(freq) for freq in range(int(freq_start), int(freq_end), int(freq_step))]
+                coeffs = [int(coeff) / 10.0 for coeff in range(int(coeff_start), int(coeff_end), int(coeff_step))]
+                new_sound = equalizer(audio_sound, freqs, coeffs)
+                os.remove(audio_sound)
+                return redirect('/new_file')
             except ValueError:
-                return render_template('error.html', error='Задано недопустимое значение')
-        return render_template('equalizer_1.html', sound=audio_sound)
-
-
-# Эквалайзер (страница 2)
-@app.route('/equalize_2', methods=['GET', 'POST'])
-def equalize_2():
-    global new_sound
-    freqs = []  # Список частот
-    coeffs = []  # Список коэффициентов
-    if request.method == 'POST':
-        try:
-            for i in range(len(eq_list_count)):
-                x, y = request.form.get(f"freq_{i + 1}"), request.form.get(f"coeff_{i + 1}")
-                freqs.append(float(x))
-                coeffs.append(float(y))
-            new_sound = equalizer(audio_sound, freqs, coeffs)
-            os.remove(audio_sound)
-            return redirect('/new_file')
-        except ValueError:
-            return render_template('error.html', error='Задано(ы) недопустимое(ые) значение(я)')
-    return render_template('equalizer_2.html', sound=audio_sound, count=eq_list_count)
+                return render_template('error.html', error='Задано(ы) недопустимое(ые) значение(я)')
+    return render_template('equalizer.html', sound=audio_sound)
 
 
 # GrossBeat
@@ -277,9 +284,9 @@ def gross_beat():
         return render_template('equalize_error.html')
     else:
         if request.method == 'POST':
-            x = request.form.get("gs_percent")
+            gs_x = request.form.get("gs_percent")
             try:
-                new_sound = gross_bit(audio_sound, int(x))
+                new_sound = gross_bit(audio_sound, int(gs_x))
                 os.remove(audio_sound)
                 return redirect('/new_file')
             except ValueError:
@@ -331,7 +338,6 @@ def set_effects():
                                                             request.form.get('effect_3'),
                                                             request.form.get('effect_4'),
                                                             request.form.get('effect_5'))
-        print(effect_1, effect_2, effect_3, effect_4, effect_5)
         try:
             new_sound = effects(audio_sound, int(effect_1), int(effect_2), int(effect_3), int(effect_4), int(effect_5))
             os.remove(audio_sound)
@@ -358,7 +364,4 @@ def download_file():
             return render_template('error.html', error='Нет файла для скачивания')
 
 
-if __name__ == '__main__':
-    db_session.global_init("db/users.sqlite")
-    app.register_blueprint(gg_api.gg)
-    app.run(port=8001)
+app.run(port=8001)
