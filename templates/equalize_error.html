@@ -1,22 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="static/css/background.css">
+{% extends "base.html" %}
+
+{% block content %}
     <link rel="stylesheet" href="static/css/rectangle2.css">
-    <title>FORSOUL</title>
-</head>
-<body>
-    {% set button_style = "background-color: #1d2602;
-            color: #ffffff; width: 15%; height: 70px;
-            font-size: 25px; font-family: Comic Sans MS;" %}
-    <center><div class="rectangle text_center">Ошибка: Эквалайзер и GrossBeat
-        принимают файлы только с расширением .wav.</div></center>
-    <br>
-    <br>
-    <br>
-    <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
-</body>
-</html>
+    <body>
+        {% set button_style = "background-color: #585858;
+                color: #ffffff; width: 25%; height: 70px;
+                font-size: 25px; font-family: Comic Sans MS;" %}
+        <center><div class="rectangle text_center" style="height: 150px">Ошибка: Эквалайзер и GrossBeat
+            принимают файлы только с расширением .wav.</div></center>
+        <br>
+        <br>
+        <br>
+        <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
+    </body>
+{% endblock %}

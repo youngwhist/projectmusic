@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="static/css/rectangle1.css">
+    <body>
+        {% set button_style = "background-color: #585858;
+                color: #ffffff; width: 25%; height: 70px;
+                font-size: 25px; font-family: Comic Sans MS;" %}
+        {% set file_style = "background-color: #585858;
+                color: #ffffff; width: 30%; height: 70px;
+                font-size: 25px; font-family: Comic Sans MS;" %}
+        <center><div class="rectangle text_center">FORSOUL</div></center>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        {% if current_user.is_authenticated %}
+            <form action="{{url_for('upload_file')}}" enctype="multipart/form-data" method="POST">
+            <center><input name="snd" type="file" style="{{file_style}}"/></center>
+            <br>
+            <center><input type="submit" style="{{button_style}}" value="Загрузить файл"/></center>
+            </form>
+            <br>
+            <br>
+            <br>
+            <center><a href="/logout"><button style="{{button_style}}">{{current_user.login}}
+                (Выйти)</button></a></center>
+            <br>
+            <br>
+            <center><a href="/info"><button style="{{button_style}}">Информация о сайте</button></a></center>
+        {% else %}
+            <center><a href="/register"><button style="{{button_style}}">Зарегистрироваться</button></a></center>
+            <br>
+            <center><a href="/login"><button style="{{button_style}}">Войти</button></a></center>
+        {% endif %}
+        <br>
+        <center><a href="/guide"><button style="{{button_style}}">Инструкция</button></a></center>
+    </body>
+{% endblock %}
