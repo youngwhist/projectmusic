@@ -444,25 +444,23 @@ async def handle_int_value_obrez(update: Update, context: CallbackContext) -> in
     int_value = update.message.text
     parts = int_value.split()
     if len(parts) == 2:
-        if chisl(int_value):
-            param1, param2 = parts
-            param1 = int(param1)
-            param2 = int(param2)
 
-            local_file_path = str(context.user_data.get('audio_file_path'))
+        param1, param2 = parts
+        param1 = int(param1)
+        param2 = int(param2)
 
-            if local_file_path:
-                with open(local_file_path, 'rb') as audio_file:
-                    obrezkaa(local_file_path, local_file_path, param1, param2)
-                    await update.message.reply_audio(audio=audio_file)
+        local_file_path = str(context.user_data.get('audio_file_path'))
 
-                os.remove(local_file_path)
-            else:
-                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+        if local_file_path:
+            with open(local_file_path, 'rb') as audio_file:
+                obrezkaa(local_file_path, local_file_path, param1, param2)
+                await update.message.reply_audio(audio=audio_file)
 
-            return ConversationHandler.END
+            os.remove(local_file_path)
         else:
-            await update.message.reply_text("Введите 2 целых числа.")
+            await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+        return ConversationHandler.END
     else:
         await update.message.reply_text("Введите 2 целых числа.")
 
@@ -518,25 +516,24 @@ async def handle_int_value_reverb(update: Update, context: CallbackContext) -> i
     int_value = update.message.text
     parts = int_value.split()
     if len(parts) == 2:
-        if chisl(int_value):
-            param1, param2 = parts
-            param1 = int(param1)
-            param2 = int(param2)
 
-            local_file_path = str(context.user_data.get('audio_file_path'))
+        param1, param2 = parts
+        param1 = int(param1)
+        param2 = int(param2)
 
-            if local_file_path:
-                with open(local_file_path, 'rb') as audio_file:
-                    reverbb(local_file_path, local_file_path, param1, param2)
-                    await update.message.reply_audio(audio=audio_file)
+        local_file_path = str(context.user_data.get('audio_file_path'))
 
-                os.remove(local_file_path)
-            else:
-                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+        if local_file_path:
+            with open(local_file_path, 'rb') as audio_file:
+                reverbb(local_file_path, local_file_path, param1, param2)
+                await update.message.reply_audio(audio=audio_file)
 
-            return ConversationHandler.END
+            os.remove(local_file_path)
         else:
-            await update.message.reply_text("Введите 2 целых числа.")
+            await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+
+        return ConversationHandler.END
+
     else:
         await update.message.reply_text("Введите 2 целых числа.")
 
@@ -611,30 +608,29 @@ async def handle_audio_effects(update: Update, context: CallbackContext) -> int:
 async def handle_int_value_effects(update: Update, context: CallbackContext) -> int:
     int_value = update.message.text
     parts = int_value.split()
-    if len(parts) == 2:
-        if chisl(int_value):
-            param1, param2, param3, param4, param5 = parts
-            param1 = int(param1)
-            param2 = int(param2)
-            param3 = int(param3)
-            param4 = int(param4)
-            param5 = int(param5)
-            local_file_path = str(context.user_data.get('audio_file_path'))
-            if local_file_path:
-                with open(local_file_path, 'rb') as audio_file:
-                    effectss(local_file_path, param1, param2, param3, param4, param5)
-                    await update.message.reply_audio(audio=audio_file)
 
-                os.remove(local_file_path)
-            else:
-                await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
+    if len(parts) == 5:
 
-            return ConversationHandler.END
+        param1, param2, param3, param4, param5 = parts
+        param1 = int(param1)
+        param2 = int(param2)
+        param3 = int(param3)
+        param4 = int(param4)
+        param5 = int(param5)
+        local_file_path = str(context.user_data.get('audio_file_path'))
+        if local_file_path:
+            with open(local_file_path, 'rb') as audio_file:
+                effectss(local_file_path, param1, param2, param3, param4, param5)
+                await update.message.reply_audio(audio=audio_file)
+
+            os.remove(local_file_path)
         else:
-            await update.message.reply_text("Введите 5 целых чисел.")
+            await update.message.reply_text("Не удалось найти аудиофайл для отправки.")
 
+        return ConversationHandler.END
     else:
         await update.message.reply_text("Введите 5 целых чисел.")
+
 
 
 # Конец блока кода
