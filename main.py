@@ -322,7 +322,7 @@ async def handle_int_value_bass(update: Update, context: CallbackContext) -> int
     int_value = update.message.text
     if int_value:
         if chisl(int_value):
-            int_value = int(int_value)
+            int_value = float(int_value)
             local_file_path = context.user_data.get('audio_file_path')
             if local_file_path:
                 with open(local_file_path, 'rb') as audio_file:
@@ -363,7 +363,7 @@ async def handle_int_value_grossbeat(update: Update, context: CallbackContext) -
     int_value = update.message.text
     if int_value:
         if chisl(int_value):
-            int_value = int(update.message.text)
+            int_value = float(update.message.text)
             local_file_path = str(context.user_data.get('audio_file_path'))
             if local_file_path:
                 with open(local_file_path, 'rb') as audio_file:
@@ -403,7 +403,7 @@ async def handle_int_value_nonoise(update: Update, context: CallbackContext) -> 
     int_value = update.message.text
     if int_value:
         if chisl(int_value):
-            int_value = int(update.message.text)
+            int_value = float(update.message.text)
             local_file_path = str(context.user_data.get('audio_file_path'))
             if local_file_path:
                 with open(local_file_path, 'rb') as audio_file:
@@ -446,8 +446,8 @@ async def handle_int_value_obrez(update: Update, context: CallbackContext) -> in
     if len(parts) == 2:
 
         param1, param2 = parts
-        param1 = int(param1)
-        param2 = int(param2)
+        param1 = float(param1)
+        param2 = float(param2)
 
         local_file_path = str(context.user_data.get('audio_file_path'))
 
@@ -518,8 +518,8 @@ async def handle_int_value_reverb(update: Update, context: CallbackContext) -> i
     if len(parts) == 2:
 
         param1, param2 = parts
-        param1 = int(param1)
-        param2 = int(param2)
+        param1 = float(param1)
+        param2 = float(param2)
 
         local_file_path = str(context.user_data.get('audio_file_path'))
 
@@ -612,11 +612,11 @@ async def handle_int_value_effects(update: Update, context: CallbackContext) -> 
     if len(parts) == 5:
 
         param1, param2, param3, param4, param5 = parts
-        param1 = int(param1)
-        param2 = int(param2)
-        param3 = int(param3)
-        param4 = int(param4)
-        param5 = int(param5)
+        param1 = float(param1)
+        param2 = float(param2)
+        param3 = float(param3)
+        param4 = float(param4)
+        param5 = float(param5)
         local_file_path = str(context.user_data.get('audio_file_path'))
         if local_file_path:
             with open(local_file_path, 'rb') as audio_file:
