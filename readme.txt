@@ -1,0 +1,2 @@
+Ссылка на бота -  https://t.me/forsoul_music_bot, github - https://github.com/youngwhist/projectmusic/tree/bot
+Не пытайтесь запустить бота через main.py, он задеплойтен на pythonanywhere. Все функции по обработке звука были написаны Михаилом.
