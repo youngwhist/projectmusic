@@ -45,15 +45,65 @@ audio_sound = ''  # Путь до текущего звука
 new_sound = ''  # Путь до нового звука
 
 
+@app.errorhandler(401)
+def unauthorized(error):
+    return render_template('error.html', error='Вы не авторизованы в системе')
+
+
 # Регистрация
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        # Недопустимые значения в пароле
+        easy_numbers = ['0123456789'[number:number + 3] for number in range(8)]
+        rus_letters = 'ёйцукенгшщзхъфывапролджэячсмитьбю'
+        easy_rus = [rus_letters[ru:ru + 3] for ru in range(31)]
+        eng_letters = 'qwertyuiopasdfghjklzxcvbnm'
+        easy_eng = [eng_letters[en:en + 3] for en in range(24)]
+
+        # Проверка пароля на правильность (отдельная функция не работает)
+
+        # Проверка на наличие 123, йцукен, qwerty и т. д.
+        for num in easy_numbers:
+            if num in form.password.data:
+                return render_template('register.html',
+                                       form=form,
+                                       message="Пароль слишком лёгкий (цифры)")
+        for eng in easy_eng:
+            if eng in form.password.data:
+                return render_template('register.html',
+                                       form=form,
+                                       message="Пароль слишком лёгкий (английские буквы)")
+        for rus in easy_rus:
+            if rus in form.password.data:
+                return render_template('register.html',
+                                       form=form,
+                                       message="Пароль слишком лёгкий (русские буквы)")
+
+        # Проверка на длину
         if len(form.password.data) < 8:
             return render_template('register.html',
                                    form=form,
                                    message="Пароль слишком короткий")
+
+        # Проверка на одинаковые буквы
+        last_letter = ''
+        let_count = 0
+        for let in form.password.data:
+            last_letter = let
+            if let_count == 0:
+                let_count += 1
+            elif let_count != 0 and let == last_letter:
+                let_count += 1
+            else:
+                let_count = 0
+            if let_count == 3:
+                return render_template('register.html',
+                                       form=form,
+                                       message="Пароль слишком лёгкий (много одинаковых букв)")
+
+        # Проверка правильности введённых данных
         if form.password.data != form.password_again.data:
             return render_template('register.html',
                                    form=form,
@@ -162,12 +212,14 @@ def guide():
 
 # Выбор операции
 @app.route('/redact', methods=['GET', 'POST'])
+@login_required
 def operation_choose():
     return render_template('operation_choose.html', sound=audio_sound)
 
 
 # Замедление/ускорение
 @app.route('/fast_slow', methods=['GET', 'POST'])
+@login_required
 def fast_slow():
     global new_sound  # Путь до нового файла записывается в глобальную переменную, иначе сайт его не распознаёт
     if request.method == 'POST':
@@ -187,6 +239,7 @@ def fast_slow():
 
 # Разворот в обратную сторону
 @app.route('/reverse', methods=['GET', 'POST'])
+@login_required
 def reverse():
     global new_sound
     if request.method == 'POST':
@@ -198,6 +251,7 @@ def reverse():
 
 # Усиление басов
 @app.route('/bast_boost', methods=['GET', 'POST'])
+@login_required
 def bast_boost():
     global new_sound
     if request.method == 'POST':
@@ -216,6 +270,7 @@ def bast_boost():
 
 # Удаление шума
 @app.route('/no_noise', methods=['GET', 'POST'])
+@login_required
 def no_noise():
     global new_sound
     if request.method == 'POST':
@@ -234,6 +289,7 @@ def no_noise():
 
 # Ревербация
 @app.route('/reverb', methods=['GET', 'POST'])
+@login_required
 def reverb():
     global new_sound
     if request.method == 'POST':
@@ -252,6 +308,7 @@ def reverb():
 
 # Эквалайзер
 @app.route('/equalizer', methods=['GET', 'POST'])
+@login_required
 def music_equalizer():
     global new_sound
     # Проверка расширения файла
@@ -278,6 +335,7 @@ def music_equalizer():
 
 # GrossBeat
 @app.route('/gross_beat', methods=['GET', 'POST'])
+@login_required
 def gross_beat():
     global new_sound
     if audio_sound[-3:] != 'wav':
@@ -296,6 +354,7 @@ def gross_beat():
 
 # Вырезка ненужного фрагмента
 @app.route('/slicer', methods=['GET', 'POST'])
+@login_required
 def slicer():
     global new_sound
     if request.method == 'POST':
@@ -314,6 +373,7 @@ def slicer():
 
 # Обрезка
 @app.route('/cutter', methods=['GET', 'POST'])
+@login_required
 def cutter():
     global new_sound
     if request.method == 'POST':
@@ -330,6 +390,7 @@ def cutter():
 
 # Наложение эффектов
 @app.route('/effects', methods=['GET', 'POST'])
+@login_required
 def set_effects():
     global new_sound
     if request.method == 'POST':
@@ -349,13 +410,18 @@ def set_effects():
 
 # Страница с обработанным файлом
 @app.route('/new_file', methods=['GET', 'POST'])
+@login_required
 def new_file():
-    path = 'static/snd/result.wav'
-    return render_template('download.html', new_sound=new_sound, path=path)
+    if os.path.exists('static/snd/result.wav') is True:
+        path = 'static/snd/result.wav'
+        return render_template('download.html', new_sound=new_sound, path=path)
+    else:
+        return render_template('error.html', error='Нет обработанного файла')
 
 
 # Скачивание файла
 @app.route('/download_file', methods=['GET', 'POST'])
+@login_required
 def download_file():
     if request.method == 'GET':
         if os.path.exists('static/snd/result.wav') is True:
