@@ -6,4 +6,13 @@ db
 forms
 static
 templates
-venv
+bass.py
+deletenenuzn.py
+effects.py
+equalazer.py
+fast_or_slow.py
+grossbit.py
+nonoise.py
+obrezka.py
+reverb.py
+revers.py
