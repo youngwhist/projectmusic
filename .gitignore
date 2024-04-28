@@ -1,2 +1,9 @@
 .idea
 venv
+__pycache__
+data
+db
+forms
+static
+templates
+venv
