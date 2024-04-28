@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="static/css/rectangle3.css">
+    <link rel="stylesheet" href="static/css/alert.css">
+    <link rel="stylesheet" href="static/css/form_control.css">
+    <body>
+        {% set button_style = "background-color: #585858;
+                color: #ffffff; width: 25%; height: 70px;
+                font-size: 25px; font-family: Comic Sans MS;" %}
+        <center><div class="rectangle text_center">Регистрация</div></center>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <br>
+            <br>
+            <p>
+                <center><label class="rectangle text_center"
+                               style="width: 15%">{{ form.login.label }}</label></center><br>
+                <center>{{ form.login(class="form-control", type="login") }}</center><br>
+                {% for error in form.login.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>
+                <center><label class="rectangle text_center"
+                               style="width: 15%">{{ form.password.label }}</label></center><br>
+                <center>{{ form.password(class="form-control", type="password") }}</center><br>
+                {% for error in form.password.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <br>
+            <p>
+                <center><label class="rectangle text_center"
+                               style="width: 35%">{{ form.password_again.label }}</label></center><br>
+                <center>{{ form.password_again(class="form-control", type="password") }}</center><br>
+                {% for error in form.password_again.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <br>
+            <br>
+            <center><input type="submit" style="{{button_style}}" value="Зарегистрироваться"/></center>
+            <br>
+            <div class="rectangle text_center" style="width: 70%">{{ message }}</div>
+        </form>
+        <br>
+        <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
+    </body>
+{% endblock %}

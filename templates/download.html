@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="static/css/rectangle2.css">
+    <body>
+        {% set button_style = "background-color: #585858;
+                color: #ffffff; width: 25%; height: 70px;
+                font-size: 25px; font-family: Comic Sans MS;" %}
+        <center><div class="rectangle text_center">Преобразование аудиофайла прошло успешно!</div></center>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <center><audio controls src="{{path}}"></audio></center>
+        <br>
+        <center><a href="/download_file"><button style="{{button_style}}">СКАЧАТЬ</button></a></center>
+        <br>
+        <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
+    </body>
+{% endblock %}

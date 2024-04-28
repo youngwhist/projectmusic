@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="static/css/rectangle4.css">
+    <link rel="stylesheet" href="static/css/form_control.css">
+    <body>
+        {% set button_style = "background-color: #585858;
+                color: #ffffff; width: 25%; height: 70px;
+                font-size: 25px; font-family: Comic Sans MS;" %}
+        {% if sound %}
+        <center><div class="rectangle text_center">Обрезка</div></center>
+        <center><div class="rectangle text_center" style="width: 75%">
+                Обрезайте аудиофайлы от начала до нужного момента</div></center>
+        <center><div class="rectangle text_center" style="width: 95%">
+                В одной минуте 60 секунд, старт аудио начинается с 0 секунд</div></center>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <center><div class="rectangle text_center" style="width: 100%;">Текущая запись: {{sound[11:]}}</div></center>
+        <br>
+        <center><audio controls src="{{sound}}"></audio></center>
+        <br>
+        <center><form action="{{ url_for('cutter')}}" method="post">
+        <label for="start" class="rectangle text_center">Начальное время (кол-во секунд):</label>
+        <input type="text" id="start" name="start" class="form-control" style="width: 25%; height: 60px"
+               placeholder="start">
+        <br>
+        <br>
+        <label for="end" class="rectangle text_center">Конечное время (кол-во секунд):</label>
+        <input type="text" id="end" name="end" class="form-control" style="width: 25%; height: 60px" placeholder="end">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <input type="submit" name="submit_button" style="{{button_style}}" value="Преобразовать файл"></form></center>
+        {% else %}
+        <h1>Выберите аудиофайл:</h1>
+        {% endif %}
+        <br>
+        <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
+    </body>
+{% endblock %}

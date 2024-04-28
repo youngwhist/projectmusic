@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="static/css/rectangle4.css">
+    <link rel="stylesheet" href="static/css/form_control.css">
+    <body>
+        {% set button_style = "background-color: #585858;
+                    color: #ffffff; width: 25%; height: 70px;
+                    font-size: 25px; font-family: Comic Sans MS;" %}
+            {% if sound %}
+                <center><div class="rectangle text_center">Эквалайзер</div></center>
+                <center><div class="rectangle text_center" style="width: 75%">Корректируйте частоты Вашего аудиофайла</div></center>
+                <center><div class="rectangle text_center" style="width: 96%">На вход принимаются диапазоны
+                    частот и коэффициентов изменения</div></center>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <center><div class="rectangle text_center" style="width: 100%;">Текущая запись: {{sound[11:]}}</div></center>
+                <br>
+                <center><audio controls src="{{sound}}"></audio></center>
+                <br>
+                <center><form action="{{ url_for('music_equalizer')}}" method="post">
+                <label for="freq_start" class="rectangle text_center" style="width: 55%">Начало диапазона частот (целое число):</label>
+                <input type="text" id="freq_start" name="freq_start" placeholder="freq_start"
+                       class="form-control" style="width: 25%; height: 60px">
+                <label for="freq_end" class="rectangle text_center" style="width: 55%">Конец диапазона частот (целое число):</label>
+                <input type="text" id="freq_end" name="freq_end" placeholder="freq_end"
+                       class="form-control" style="width: 25%; height: 60px">
+                <label for="freq_step" class="rectangle text_center" style="width: 55%">Шаг диапазона частот (целое число):</label>
+                <input type="text" id="freq_step" name="freq_step" placeholder="freq_step"
+                       class="form-control" style="width: 25%; height: 60px">
+                <br>
+                <br>
+                <label for="coeff_start" class="rectangle text_center" style="width: 70%">Начало диапазона коэффициентов
+                    (целое число):</label>
+                <input type="text" id="coeff_start" name="coeff_start" placeholder="coeff_start"
+                       class="form-control" style="width: 25%; height: 60px">
+                <label for="coeff_end" class="rectangle text_center" style="width: 65%">Конец диапазона коэффициентов
+                    (целое число):</label>
+                <input type="text" id="coeff_end" name="coeff_end" placeholder="coeff_end"
+                       class="form-control" style="width: 25%; height: 60px">
+                <label for="coeff_step" class="rectangle text_center" style="width: 65%">Шаг диапазона коэффициентов
+                    (целое число):</label>
+                <input type="text" id="coeff_step" name="coeff_step" placeholder="coeff_step"
+                       class="form-control" style="width: 25%; height: 60px">
+                <br>
+                <input type="submit" name="submit_button" style="{{button_style}}" value="Преобразовать файл"></form></center>
+            {% else %}
+                <h1>Выберите аудиофайл:</h1>
+            {% endif %}
+            <br>
+            <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
+    </body>
+{% endblock %}

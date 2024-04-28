@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="static/css/rectangle4.css">
+    <link rel="stylesheet" href="static/css/form_control.css">
+    <title>FORSOUL</title>
+    <body>
+        {% set button_style = "background-color: #585858;
+                color: #ffffff; width: 25%; height: 70px;
+                font-size: 25px; font-family: Comic Sans MS;" %}
+        {% if sound %}
+        <center><div class="rectangle text_center">Наложение эффектов</div></center>
+        <center><div class="rectangle text_center" style="width: 75%">
+                Накладывайте 5 различных эффектов на аудиофайл</div></center>
+        <center><div class="rectangle text_center" style="width: 75%">
+                За одну сессию накладываются все 5 эффектов</div></center>
+        <center><div class="rectangle text_center" style="width: 95%">
+                В одной секунде 1000 миллисекунд, старт аудио начинается с 0 секунд</div></center>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <center><div class="rectangle text_center" style="width: 100%;">Текущая запись: {{sound[11:]}}</div></center>
+        <br>
+        <center><audio controls src="{{sound}}"></audio></center>>
+        <br>
+        <center><form action="{{ url_for('set_effects')}}" method="post">
+        <label for="effect_1" class="rectangle text_center">Время наложения эффекта 1 (в миллисекундах):</label>
+        <input type="text" id="effect_1" name="effect_1" placeholder="effect_1"
+               class="form-control" style="width: 25%; height: 60px">
+        <br>
+        <br>
+        <label for="effect_2" class="rectangle text_center">Время наложения эффекта 2 (в миллисекундах):</label>
+        <input type="text" id="effect_2" name="effect_2" placeholder="effect_2"
+               class="form-control" style="width: 25%; height: 60px">
+        <br>
+        <br>
+        <label for="effect_3" class="rectangle text_center">Время наложения эффекта 3 (в миллисекундах):</label>
+        <input type="text" id="effect_3" name="effect_3" placeholder="effect_3"
+               class="form-control" style="width: 25%; height: 60px">
+        <br>
+        <br>
+        <label for="effect_4" class="rectangle text_center">Время наложения эффекта 4 (в миллисекундах):</label>
+        <input type="text" id="effect_4" name="effect_4" placeholder="effect_4"
+               class="form-control" style="width: 25%; height: 60px">
+        <br>
+        <br>
+        <label for="effect_5" class="rectangle text_center">Время наложения эффекта 5 (в миллисекундах):</label>
+        <input type="text" id="effect_5" name="effect_5" placeholder="effect_5"
+               class="form-control" style="width: 25%; height: 60px">
+        <br>
+        <br>
+        <input type="submit" name="submit_button" style="{{button_style}}" value="Преобразовать файл"></form></center>
+        {% else %}
+        <h1>Выберите аудиофайл:</h1>
+        {% endif %}
+        <br>
+        <center><a href="/"><button style="{{button_style}}">Вернуться на главную</button></a></center>
+    </body>
+{% endblock %}
