@@ -428,3 +428,6 @@ def download_file():
             return send_file('static/snd/result.wav', as_attachment=True)
         else:
             return render_template('error.html', error='Нет файла для скачивания')
+
+
+app.run()
