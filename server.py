@@ -38,6 +38,7 @@ reverb_diapason = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
 app.config['UPLOAD'] = upload_folder
 app.config['SECRET_KEY'] = 'forsoul_secretkey'
+app.config['MAX_CONTENT_LENGTH'] = 32000000  # 32 МБ - максимальный размер
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -48,6 +49,11 @@ new_sound = ''  # Путь до нового звука
 @app.errorhandler(401)
 def unauthorized(error):
     return render_template('error.html', error='Вы не авторизованы в системе')
+
+
+@app.errorhandler(413)
+def too_large(error):
+    return render_template('error.html', error='Файл слишком большой. (максимум 32 МБ)')
 
 
 # Регистрация
