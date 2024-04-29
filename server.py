@@ -97,7 +97,6 @@ def register():
         last_letter = ''
         let_count = 0
         for let in form.password.data:
-            last_letter = let
             if let_count == 0:
                 let_count += 1
             elif let_count != 0 and let == last_letter:
@@ -108,6 +107,7 @@ def register():
                 return render_template('register.html',
                                        form=form,
                                        message="Пароль слишком лёгкий (много одинаковых букв)")
+            last_letter = let
 
         # Проверка правильности введённых данных
         if form.password.data != form.password_again.data:
